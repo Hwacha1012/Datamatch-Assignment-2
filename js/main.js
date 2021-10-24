@@ -10,9 +10,11 @@ var genre = [];
 d3.csv("data/spotify_data.csv", function(data){
 
 	// Analyze the dataset in the web console
-
+	console.log(data);
 	var preparedData = prepareData(data);
-
+	console.log(preparedData);
+	//console.log(data);
+	console.log(genre)
 	createVisualization(preparedData);
 });
 
@@ -21,6 +23,19 @@ var prepareData = function(data) {
 	// Use the web console to get a better idea of the dataset
 	// Convert numeric values to numbers.
 	// Make sure the genres array has the name of each genre
+	//console.log(d);
+	data.forEach(function(d){
+		if(!genre.includes(d.genre)){
+			genre.push(d.genre);
+		}
+
+		d.streams_in_mils = +d.streams_in_mils;
+		d.songs = +d.songs;
+		d.songs_with_mil_plus_streams = +d.songs_with_mil_plus_streams;
+
+	})
+	return(data);
+
 
 }
 
@@ -28,6 +43,12 @@ var createVisualization = function(data) {
 	// Step 2: Append a new SVG area with D3
 	// The ID of the target div container in the html file is #chart-area
 	// Use the margin convention with 50 px of bottom padding and 30 px of padding on other sides!
+	var margin= {top: 30, right: 30, left: 30, bottom: 50};
+	d3.select("#chart-area").append("svg")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
 	// Step 3: Create linear scales by using the D3 scale functions
@@ -36,9 +57,19 @@ var createVisualization = function(data) {
 	// Use d3.min() and d3.max() for the input domain
 	// Use the variables height and width for the output range
 
+	var numSongsScale = d3.scaleLinear()
+		.domain([0, d3.max(data, function(d) { return d[0]; })])
+		.range([0, width]);
+	var streamsScale = d3.scaleLinear()
+		.domain([0, d3.max(data, function(d) { return d[1]; })])
+		.range([0, height]);
 
 	// Step 4: Try the scale functions
 	// You can call the functions with example values and print the result to the web console.
+	console.log(numSongsScale(0));
+	console.log(numSongsScale(100));
+	console.log(streamsScale(0));
+	console.log(streamsScale(100));
 
 
 	// Step 5: Map the countries to SVG circles
