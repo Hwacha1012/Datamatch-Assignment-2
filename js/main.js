@@ -3,6 +3,8 @@
 var width = 700,
 	height = 500;
 
+//var width = 1000,
+//	height = 800;
 var genre = [];
 //
 
@@ -83,12 +85,35 @@ var createVisualization = function(data) {
 	// Use select(), data(), enter() and append()
 	// Instead of setting the x- and y-values directly,
 	// you have to use your scale functions to convert the data values to pixel measures
+
+	var streamMilExtent = d3.extent(data, function(d) { return d.songs_with_mil_plus_streams; })
+	var streamMilScale = d3.scaleLinear()
+		.domain([streamMilExtent[0], streamMilExtent[1]])
+		.range([4, 30]);
+
+	sortedData = data.sort(function(x, y){
+		return d3.ascending(x.streams_in_mils, y.streams_in_mils);
+	})
+
+	console.log(sortedData)
+	var linearColor = d3.scaleLinear()
+		.domain([0,genre.length])
+		.range(["darkgreen","lightgreen"]);
+
+
+	//console.log(linearColor(2))
+
+
 	d3.select("#chart-area").select("svg").selectAll("circle")
-		.data(data)
+		.data(sortedData)
 		.enter()
 		.append("circle")
-		.attr("r", 10)
-		.attr("fill", "black")
+		.attr("r", function (d){
+			return streamMilScale(d.songs_with_mil_plus_streams)
+		})
+		.attr("fill", function (d){
+			return linearColor(genre.indexOf(d.genre))
+		})
 		.attr("cx", function (d){
 			return numSongsScale(d.songs)
 		})
@@ -196,15 +221,21 @@ var createVisualization = function(data) {
 	// The radius should be between 4 - 30px.
 	// Then use the scale function to specify a dynamic radius
 
+	//put code where circles are initially drawn (step 5)
+
+
+
 
 	// Step 11: Change the drawing order
 	// Larger circles should not overlap or cover smaller circles.
 	// Sort the artists by streams before drawing them.
 
+	//put code where circles are initially drawn (step 5)
 
 	// Step 12: Color the circles depending on their genres
 	// Use a D3 color scale
 
+	//put code where circles are initially drawn (step 5)
 
 
 }
