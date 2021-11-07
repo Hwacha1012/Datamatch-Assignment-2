@@ -45,10 +45,10 @@ var createVisualization = function(data) {
 	// Use the margin convention with 50 px of bottom padding and 30 px of padding on other sides!
 	var margin = {top: 30, right: 30, left: 30, bottom: 50};
 	d3.select("#chart-area").append("svg")
-			.attr("width", width + margin.left + margin.right)
-			.attr("height", height + margin.top + margin.bottom)
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
 		.append("g")
-			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
 	// Step 3: Create linear scales by using the D3 scale functions
@@ -56,12 +56,18 @@ var createVisualization = function(data) {
 	// Call them numSongsScale and streamsScale.
 	// Use d3.min() and d3.max() for the input domain
 	// Use the variables height and width for the output range
+	var xExtent = d3.extent(data, function(d) { return d.songs; }),
+		xRange = xExtent[1] - xExtent[0],
+		yExtent = d3.extent(data, function(d) { return d.streams_in_mils; }),
+		yRange = yExtent[1] - yExtent[0];
+	//numSongsScale.domain([xExtent[0] - (xRange * .05), xExtent[1] + (xRange * .05)]);
+	//streamsScale.domain([yExtent[0] - (yRange * .05), yExtent[1] + (yRange * .05)]);
 	var padding = 20;
 	var numSongsScale = d3.scaleLinear()
-		.domain([0, d3.max(data, function(d) { return d.songs; })])
+		.domain([xExtent[0] - (xRange * .1), xExtent[1] + (xRange * .1)])
 		.range([padding, width-padding]);
 	var streamsScale = d3.scaleLinear()
-		.domain([0, d3.max(data, function(d) { return d.streams_in_mils; })])
+		.domain([yExtent[0] - (yRange * .1), yExtent[1] + (yRange * .1)])
 		.range([padding, height-padding]);
 
 	// Step 4: Try the scale functions
@@ -113,10 +119,76 @@ var createVisualization = function(data) {
 	// Step 8: Refine the domain of the scales
 	// Notice that some of the circles are positioned on the outer edges of the svg area
 	// You can include buffer values to widen the domain and to prevent circles and axes from overlapping
+	// get extents and range
+	//I think I need to rerun the create Visualization function to update the domains of the scales in the displayed svg,
+	// so I put this part with Step 3
 
 
+	//numSongsScale.domain([10, d3.max(data, function(d) { return d.songs; })-1000]).range([padding, width-padding]);
+	//streamsScale.domain([10000, d3.max(data, function(d) { return d.streams_in_mils; })-10000]).range([padding, height-padding]);
+	/*
+	var xAxis2 = d3.axisBottom().scale(numSongsScale);
+	var yAxis2 = d3.axisLeft().scale(streamsScale);
+	console.log("Hi");
+	console.log(numSongsScale(1));
+	console.log(numSongsScale(100));
+	console.log(numSongsScale(1000));
+	console.log(streamsScale(1));
+	console.log(streamsScale(100));
+	console.log(streamsScale(1000));
+	d3.select("#xAxis").remove();
+	d3.select("#yAxis").remove();
+	d3.update
+	d3.select("#chart-area").select("svg")
+		.append("g")
+		.attr("class", "xAxis")
+		.attr("transform", "translate(0," + (padding) + ")")
+		.call(xAxis2);
+	d3.select("#chart-area").select("svg")
+		.append("g")
+		.attr("class", "yAxis")
+		.attr("transform", "translate("+(width-padding)+",0)")
+		//.attr("transform", "translate("+(padding)+",)")
+		.call(yAxis2);
+		*/
+
+	/*
+	d3.select("#xAxis")
+		.attr("transform", "translate(0," + (padding) + ")")
+		.call(xAxis2);
+	d3.select("yAxis")
+		.attr("transform", "translate("+(width-padding)+",0)")
+		.call(yAxis2);
+	*/
+	/*
+	d3.select("#chart-area").select("svg")
+		.append("g")
+		.attr("class", "xAxis2")
+		.attr("transform", "translate(0," + (padding) + ")")
+		.call(xAxis2);
+	d3.select("#chart-area").select("svg")
+		.append("g")
+		.attr("class", "yAxis2")
+		.attr("transform", "translate("+(width-padding)+",0)")
+		//.attr("transform", "translate("+(padding)+",)")
+		.call(yAxis2);
+	*/
 	// Step 9: Label your axes
-
+	d3.select("#chart-area").select("svg")
+		.append("text")
+		.attr("class", "x label")
+		.attr("text-anchor", "end")
+		.attr("x", width)
+		.attr("y", height - 6)
+		.text("Millions of Streams");
+	d3.select("#chart-area").select("svg")
+		.append("text")
+		.attr("class", "y label")
+		.attr("text-anchor", "end")
+		.attr("y", 6)
+		.attr("dy", ".75em")
+		.attr("transform", "rotate(-90)")
+		.text("Songs");
 
 
 	// Step 10: Add a scale function for the circle radius
