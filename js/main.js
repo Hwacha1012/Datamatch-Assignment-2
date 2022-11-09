@@ -70,7 +70,7 @@ var createVisualization = function(data) {
 		.range([padding, width-padding]);
 	var streamsScale = d3.scaleLinear()
 		.domain([yExtent[0] - (yRange * .1), yExtent[1] + (yRange * .1)])
-		.range([padding, height-padding]);
+		.range([height-padding, padding]);
 
 	// Step 4: Try the scale functions
 	// You can call the functions with example values and print the result to the web console.
@@ -123,7 +123,7 @@ var createVisualization = function(data) {
 
 	// Step 6: Use your scales (songs and streams) to create D3 axis functions
 	var xAxis = d3.axisBottom().scale(numSongsScale);
-	var yAxis = d3.axisLeft().scale(streamsScale);
+	var yAxis = d3.axisRight().scale(streamsScale);
 
 	// Step 7: Append the x- and y-axis to your scatterplot
 	// Add the axes to a group element that you add to the SVG drawing area.
@@ -131,7 +131,7 @@ var createVisualization = function(data) {
 	d3.select("#chart-area").select("svg")
 		.append("g")
 		.attr("class", "xAxis")
-		.attr("transform", "translate(0," + (padding) + ")")
+		.attr("transform", "translate(0," + (height-padding) + ")")
 		.call(xAxis);
 	d3.select("#chart-area").select("svg")
 		.append("g")
@@ -203,9 +203,19 @@ var createVisualization = function(data) {
 		.append("text")
 		.attr("class", "x label")
 		.attr("text-anchor", "end")
-		.attr("x", width)
-		.attr("y", height - 6)
+		.attr("x", width + (2*padding))
+		.attr("y", padding-5)
 		.text("Millions of Streams");
+
+	d3.select("#chart-area").select("svg")
+		.append("text")
+		.attr("class", "y label")
+		.attr("text-anchor", "end")
+		.attr("y", height)
+		.attr("x", (2*padding))
+		.text("Songs");
+
+	/*
 	d3.select("#chart-area").select("svg")
 		.append("text")
 		.attr("class", "y label")
@@ -215,7 +225,7 @@ var createVisualization = function(data) {
 		.attr("transform", "rotate(-90)")
 		.text("Songs");
 
-
+		*/
 	// Step 10: Add a scale function for the circle radius
 	// Create a linear scale function dependent on the number of million plus streamed songs
 	// The radius should be between 4 - 30px.
